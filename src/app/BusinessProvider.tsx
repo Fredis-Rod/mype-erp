@@ -51,7 +51,12 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
       setMemberships(rows)
     }
     setLoading(false)
-  }, [user])
+    // Depende solo del id (estable), no del objeto `user` completo: Supabase
+    // entrega un objeto nuevo en cada refresco silencioso del token, y si
+    // dependiéramos del objeto, eso recargaría este provider y remontaría
+    // <AppShell/>, perdiendo la pantalla en la que estaba el usuario.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id])
 
   useEffect(() => {
     load()

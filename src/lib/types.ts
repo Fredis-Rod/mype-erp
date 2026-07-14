@@ -68,4 +68,4 @@ export interface Purchase {
 }
 
 /** Unidades de medida sugeridas */
-export const UNITS = ['unidad', 'libra', 'kg', 'gramo', 'litro', 'ml', 'caja', 'docena', 'metro', 'paquete']
+export const UNITS = ['unidad', 'libra', 'kg', 'gramo', 'litro', 'ml', 'caja', 'bolsa', 'docena', 'metro', 'paquete']

@@ -191,9 +191,15 @@ export default function SalesPage() {
             <p className="text-sm text-slate-400">El carrito está vacío. Agrega productos desde la búsqueda.</p>
           ) : (
             <div className="space-y-2">
+              <div className="grid grid-cols-[1fr_64px_84px_28px] gap-2 text-xs font-medium text-slate-500">
+                <span>Producto</span><span>Cantidad</span><span>Precio unitario</span><span></span>
+              </div>
               {cart.map((l) => (
                 <div key={l.product_id} className="grid grid-cols-[1fr_64px_84px_28px] items-center gap-2 text-sm">
-                  <span className="truncate" title={l.name}>{l.name}</span>
+                  <span className="truncate" title={l.name}>
+                    {l.name}
+                    <span className="ml-1 text-xs text-slate-400">({l.unit})</span>
+                  </span>
                   <TextInput type="number" step="0.001" min="0" value={l.qty} onChange={(e) => setLine(l.product_id, { qty: Number(e.target.value) })} />
                   <TextInput type="number" step="0.01" min="0" value={l.unit_price} onChange={(e) => setLine(l.product_id, { unit_price: Number(e.target.value) })} />
                   <button className="text-slate-400 hover:text-red-600" onClick={() => removeLine(l.product_id)}>✕</button>

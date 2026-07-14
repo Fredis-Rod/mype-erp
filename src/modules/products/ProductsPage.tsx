@@ -117,6 +117,13 @@ function AdminView() {
     [products],
   )
 
+  // Unidades sugeridas: la lista base + cualquier unidad personalizada que el
+  // negocio ya haya usado (así "bolsa", "saco", etc. quedan disponibles después).
+  const units = useMemo(
+    () => [...new Set([...UNITS, ...products.map((p) => p.unit).filter(Boolean)])],
+    [products],
+  )
+
   const startNew = () => setForm(emptyForm())
 
   const startEdit = async (p: Product) => {
@@ -216,7 +223,7 @@ function AdminView() {
             </Field>
             <Field label="Unidad de medida">
               <TextInput list="units" value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} />
-              <datalist id="units">{UNITS.map((u) => <option key={u} value={u} />)}</datalist>
+              <datalist id="units">{units.map((u) => <option key={u} value={u} />)}</datalist>
             </Field>
             <Field label="Precio de venta">
               <TextInput type="number" step="0.01" min="0" value={form.sale_price} onChange={(e) => setForm({ ...form, sale_price: e.target.value })} />
