@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useBusiness } from '../../app/BusinessProvider'
 import { Card, TextInput } from '../../components/ui'
-import { fmtMoney, fmtQty, today } from '../../lib/format'
+import { fmtMoney, fmtQty, fmtDate, today } from '../../lib/format'
 import type { Product } from '../../lib/types'
 
 type Tab = 'inventario' | 'faltante' | 'ventas' | 'resultados'
@@ -122,32 +122,76 @@ function PeriodPicker({ from, to, setFrom, setTo }: { from: string; to: string; 
 
 // ---------- Ventas por periodo ----------
 interface SaleRow { id: string; date: string; total: number; payment_type: string; discount: number }
+interface SaleItemRow { product_id: string; qty: number; unit_price: number }
+interface ProductLite { id: string; name: string; category: string | null; unit: string }
 
 function SalesReport() {
   const { currentBusiness } = useBusiness()
   const [from, setFrom] = useState(firstDayOfMonth())
   const [to, setTo] = useState(today())
   const [sales, setSales] = useState<SaleRow[]>([])
+  const [items, setItems] = useState<SaleItemRow[]>([])
+  const [products, setProducts] = useState<ProductLite[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!currentBusiness) return
     setLoading(true)
-    supabase
-      .from('sales')
-      .select('id, date, total, payment_type, discount')
-      .gte('date', from)
-      .lte('date', to)
-      .then(({ data }) => {
-        setSales((data ?? []) as SaleRow[])
-        setLoading(false)
-      })
+    ;(async () => {
+      const { data: saleRows } = await supabase
+        .from('sales').select('id, date, total, payment_type, discount').gte('date', from).lte('date', to)
+      const rows = (saleRows ?? []) as SaleRow[]
+      setSales(rows)
+
+      const ids = rows.map((r) => r.id)
+      const [{ data: itemRows }, { data: prodRows }] = await Promise.all([
+        ids.length
+          ? supabase.from('sale_items').select('product_id, qty, unit_price').in('sale_id', ids)
+          : Promise.resolve({ data: [] as SaleItemRow[] }),
+        supabase.from('products').select('id, name, category, unit'),
+      ])
+      setItems((itemRows ?? []) as SaleItemRow[])
+      setProducts((prodRows ?? []) as ProductLite[])
+      setLoading(false)
+    })()
   }, [currentBusiness, from, to])
 
   const totalSales = sales.reduce((s, x) => s + Number(x.total), 0)
   const totalDiscount = sales.reduce((s, x) => s + Number(x.discount), 0)
   const cash = sales.filter((x) => x.payment_type === 'contado').reduce((s, x) => s + Number(x.total), 0)
   const credit = sales.filter((x) => x.payment_type === 'credito').reduce((s, x) => s + Number(x.total), 0)
+
+  const productMap = useMemo(() => new Map(products.map((p) => [p.id, p])), [products])
+
+  const byProduct = useMemo(() => {
+    const map = new Map<string, { name: string; unit: string; qty: number; revenue: number }>()
+    for (const it of items) {
+      const p = productMap.get(it.product_id)
+      const key = it.product_id
+      const cur = map.get(key) ?? { name: p?.name ?? 'Producto eliminado', unit: p?.unit ?? '', qty: 0, revenue: 0 }
+      cur.qty += Number(it.qty)
+      cur.revenue += Number(it.qty) * Number(it.unit_price)
+      map.set(key, cur)
+    }
+    return [...map.values()].sort((a, b) => b.revenue - a.revenue)
+  }, [items, productMap])
+
+  const byCategory = useMemo(() => {
+    const map = new Map<string, number>()
+    for (const it of items) {
+      const p = productMap.get(it.product_id)
+      const key = p?.category ?? 'Sin categoría'
+      map.set(key, (map.get(key) ?? 0) + Number(it.qty) * Number(it.unit_price))
+    }
+    return [...map.entries()].sort((a, b) => b[1] - a[1])
+  }, [items, productMap])
+
+  const byDay = useMemo(() => {
+    const map = new Map<string, number>()
+    for (const s of sales) map.set(s.date, (map.get(s.date) ?? 0) + Number(s.total))
+    return [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]))
+  }, [sales])
+  const maxDay = Math.max(...byDay.map(([, v]) => v), 1)
 
   return (
     <div className="space-y-4">
@@ -162,9 +206,67 @@ function SalesReport() {
             <Card><div className="text-sm text-label">Crédito</div><div className="text-xl font-semibold">{fmtMoney(credit)}</div></Card>
             <Card><div className="text-sm text-label">Descuentos otorgados</div><div className="text-xl font-semibold">{fmtMoney(totalDiscount)}</div></Card>
           </div>
+
           <Card>
-            <div className="text-sm text-label">{sales.length} venta(s) en el periodo</div>
+            <div className="mb-3 text-[13.5px] font-semibold text-ink">Evolución de ventas en el periodo</div>
+            {byDay.length === 0 ? (
+              <p className="text-sm text-faint">Sin ventas en el periodo.</p>
+            ) : (
+              <div className="flex items-end gap-1.5 overflow-x-auto pb-1" style={{ height: 110 }}>
+                {byDay.map(([d, v]) => (
+                  <div key={d} className="flex h-full min-w-[10px] flex-1 flex-col justify-end" title={`${fmtDate(d)}: ${fmtMoney(v)}`}>
+                    <div className="w-full rounded bg-brand-soft" style={{ height: `${Math.max((v / maxDay) * 100, 4)}%` }} />
+                  </div>
+                ))}
+              </div>
+            )}
           </Card>
+
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Card>
+              <div className="mb-3 text-[13.5px] font-semibold text-ink">Ventas por categoría</div>
+              {byCategory.length === 0 ? (
+                <p className="text-sm text-faint">Sin datos.</p>
+              ) : (
+                <ul className="space-y-2 text-sm">
+                  {byCategory.map(([cat, amt]) => (
+                    <li key={cat} className="flex justify-between">
+                      <span className="text-ink-soft">{cat}</span>
+                      <span className="font-medium text-ink">{fmtMoney(amt)}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Card>
+
+            <Card>
+              <div className="mb-3 text-[13.5px] font-semibold text-ink">Ventas por producto</div>
+              {byProduct.length === 0 ? (
+                <p className="text-sm text-faint">Sin datos.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-left text-[11.5px] font-semibold uppercase tracking-wide text-faint">
+                        <th className="py-2">Producto</th><th className="text-right">Unidades</th>
+                        <th className="text-right">Precio prom.</th><th className="text-right">Ingresos</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {byProduct.map((p) => (
+                        <tr key={p.name} className="border-t border-page">
+                          <td className="py-2">{p.name}</td>
+                          <td className="text-right">{fmtQty(p.qty)} {p.unit}</td>
+                          <td className="text-right text-label">{fmtMoney(p.revenue / p.qty)}</td>
+                          <td className="text-right font-medium">{fmtMoney(p.revenue)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </Card>
+          </div>
         </>
       )}
     </div>
