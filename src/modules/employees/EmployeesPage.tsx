@@ -62,8 +62,8 @@ export default function EmployeesPage() {
   return (
     <div className="max-w-2xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-800">Empleados y accesos</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-2xl font-bold text-ink">Empleados y accesos</h1>
+        <p className="text-sm text-label">
           Agrega a un empleado por su correo (debe crear su cuenta primero). El empleado solo
           registra ventas y consulta existencias; no ve costos ni finanzas.
         </p>
@@ -82,7 +82,7 @@ export default function EmployeesPage() {
           </Field>
           <Field label="Rol">
             <select
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-input-line px-3 py-2 text-sm"
               value={role}
               onChange={(e) => setRole(e.target.value as Role)}
             >
@@ -99,22 +99,22 @@ export default function EmployeesPage() {
       </Card>
 
       <Card>
-        <h2 className="mb-3 font-medium text-slate-800">Miembros del negocio</h2>
+        <h2 className="mb-3 font-semibold text-ink">Miembros del negocio</h2>
         {loading ? (
-          <p className="text-sm text-slate-400">Cargando…</p>
+          <p className="text-sm text-faint">Cargando…</p>
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-page">
             {rows.map((r) => (
               <li key={r.user_id} className="flex items-center justify-between py-2 text-sm">
-                <span className="text-slate-700">
+                <span className="text-ink-soft">
                   {r.email ?? r.user_id}
-                  {r.user_id === user?.id && <span className="ml-2 text-xs text-slate-400">(tú)</span>}
+                  {r.user_id === user?.id && <span className="ml-2 text-xs text-faint">(tú)</span>}
                 </span>
                 <span
                   className={`rounded px-2 py-0.5 text-xs ${
                     r.role === 'admin'
-                      ? 'bg-emerald-100 text-emerald-700'
-                      : 'bg-slate-100 text-slate-600'
+                      ? 'bg-brand-soft text-brand-dark'
+                      : 'bg-page text-ink-soft'
                   }`}
                 >
                   {r.role}

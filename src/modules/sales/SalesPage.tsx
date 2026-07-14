@@ -151,11 +151,11 @@ export default function SalesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-800">Nueva venta</h1>
-          <p className="text-sm text-slate-500">Busca productos, agrégalos y cobra.</p>
+          <h1 className="text-2xl font-bold text-ink">Nueva venta</h1>
+          <p className="text-sm text-label">Busca productos, agrégalos y cobra.</p>
         </div>
         {pending > 0 && (
-          <span className="rounded-full bg-amber-100 px-3 py-1 text-xs text-amber-700">
+          <span className="rounded-full bg-warn-soft px-3 py-1 text-xs text-warn">
             {pending} venta(s) por sincronizar
           </span>
         )}
@@ -167,78 +167,78 @@ export default function SalesPage() {
           <Field label="Buscar producto">
             <TextInput autoFocus value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Nombre o código…" />
           </Field>
-          <ul className="mt-3 divide-y divide-slate-100">
+          <ul className="mt-3 divide-y divide-page">
             {results.map((p) => (
               <li key={p.id}>
-                <button onClick={() => addToCart(p)} className="flex w-full items-center justify-between py-2 text-left text-sm hover:bg-slate-50">
+                <button onClick={() => addToCart(p)} className="flex w-full items-center justify-between py-2 text-left text-sm hover:bg-page">
                   <span>
-                    <span className="font-medium text-slate-700">{p.name}</span>
-                    <span className={`ml-2 text-xs ${p.stock_qty <= p.min_stock ? 'font-medium text-red-600' : 'text-slate-400'}`}>
+                    <span className="font-medium text-ink">{p.name}</span>
+                    <span className={`ml-2 text-xs ${p.stock_qty <= p.min_stock ? 'font-medium text-danger' : 'text-faint'}`}>
                       {fmtQty(p.stock_qty)} {p.unit}
                     </span>
                   </span>
-                  <span className="text-slate-600">{fmtMoney(p.sale_price)}</span>
+                  <span className="text-ink-soft">{fmtMoney(p.sale_price)}</span>
                 </button>
               </li>
             ))}
-            {results.length === 0 && <li className="py-2 text-sm text-slate-400">Sin resultados.</li>}
+            {results.length === 0 && <li className="py-2 text-sm text-faint">Sin resultados.</li>}
           </ul>
         </Card>
 
         {/* Carrito + cobro */}
         <Card>
           {cart.length === 0 ? (
-            <p className="text-sm text-slate-400">El carrito está vacío. Agrega productos desde la búsqueda.</p>
+            <p className="text-sm text-faint">El carrito está vacío. Agrega productos desde la búsqueda.</p>
           ) : (
             <div className="space-y-2">
-              <div className="grid grid-cols-[1fr_64px_84px_28px] gap-2 text-xs font-medium text-slate-500">
+              <div className="grid grid-cols-[1fr_64px_84px_28px] gap-2 text-xs font-medium text-label">
                 <span>Producto</span><span>Cantidad</span><span>Precio unitario</span><span></span>
               </div>
               {cart.map((l) => (
                 <div key={l.product_id} className="grid grid-cols-[1fr_64px_84px_28px] items-center gap-2 text-sm">
                   <span className="truncate" title={l.name}>
                     {l.name}
-                    <span className="ml-1 text-xs text-slate-400">({l.unit})</span>
+                    <span className="ml-1 text-xs text-faint">({l.unit})</span>
                   </span>
                   <TextInput type="number" step="0.001" min="0" value={l.qty} onChange={(e) => setLine(l.product_id, { qty: Number(e.target.value) })} />
                   <TextInput type="number" step="0.01" min="0" value={l.unit_price} onChange={(e) => setLine(l.product_id, { unit_price: Number(e.target.value) })} />
-                  <button className="text-slate-400 hover:text-red-600" onClick={() => removeLine(l.product_id)}>✕</button>
+                  <button className="text-faint hover:text-danger" onClick={() => removeLine(l.product_id)}>✕</button>
                 </div>
               ))}
             </div>
           )}
 
-          <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
+          <div className="mt-4 space-y-3 border-t border-page pt-4">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-500">Subtotal</span>
+              <span className="text-label">Subtotal</span>
               <span>{fmtMoney(subtotal)}</span>
             </div>
             <div className="flex items-center justify-between gap-2 text-sm">
-              <span className="text-slate-500">Descuento</span>
+              <span className="text-label">Descuento</span>
               <TextInput type="number" step="0.01" min="0" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="0.00" className="w-28 text-right" />
             </div>
-            <div className="flex items-center justify-between text-lg font-semibold text-slate-800">
+            <div className="flex items-center justify-between text-lg font-bold text-ink">
               <span>Total</span><span>{fmtMoney(total)}</span>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
               <Field label="Cobro">
-                <select className="w-full rounded-lg border border-slate-300 px-2 py-2 text-sm" value={paymentType} onChange={(e) => setPaymentType(e.target.value as 'contado' | 'credito')}>
+                <select className="w-full rounded-lg border border-input-line px-2 py-2 text-sm" value={paymentType} onChange={(e) => setPaymentType(e.target.value as 'contado' | 'credito')}>
                   <option value="contado">Contado</option>
                   <option value="credito">Crédito (fiado)</option>
                 </select>
               </Field>
               <Field label="Método">
-                <select className="w-full rounded-lg border border-slate-300 px-2 py-2 text-sm" value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
+                <select className="w-full rounded-lg border border-input-line px-2 py-2 text-sm" value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
                   {PAYMENT_METHODS.map((m) => <option key={m} value={m}>{m}</option>)}
                 </select>
               </Field>
             </div>
 
             {paymentType === 'credito' && (
-              <div className="space-y-2 rounded-lg bg-amber-50 p-3">
+              <div className="space-y-2 rounded-lg bg-warn-soft p-3">
                 <Field label="Cliente">
-                  <select className="w-full rounded-lg border border-slate-300 px-2 py-2 text-sm" value={customerId} onChange={(e) => setCustomerId(e.target.value)}>
+                  <select className="w-full rounded-lg border border-input-line px-2 py-2 text-sm" value={customerId} onChange={(e) => setCustomerId(e.target.value)}>
                     <option value="">Elegir cliente…</option>
                     {customers.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>

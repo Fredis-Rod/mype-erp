@@ -61,8 +61,8 @@ export default function SuppliersPage() {
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-800">Proveedores</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-2xl font-bold text-ink">Proveedores</h1>
+        <p className="text-sm text-label">
           A quién le compras la mercadería. Un producto puede tener varios proveedores.
         </p>
       </div>
@@ -88,21 +88,21 @@ export default function SuppliersPage() {
       </Card>
 
       <Card>
-        <h2 className="mb-3 font-medium text-slate-800">Lista de proveedores</h2>
+        <h2 className="mb-3 font-semibold text-ink">Lista de proveedores</h2>
         {loading ? (
-          <p className="text-sm text-slate-400">Cargando…</p>
+          <p className="text-sm text-faint">Cargando…</p>
         ) : rows.length === 0 ? (
-          <p className="text-sm text-slate-400">Aún no hay proveedores.</p>
+          <p className="text-sm text-faint">Aún no hay proveedores.</p>
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-page">
             {rows.map((s) => (
               <li key={s.id} className="flex items-center justify-between py-2 text-sm">
                 <span>
-                  <span className="font-medium text-slate-700">{s.name}</span>
-                  {s.phone && <span className="ml-2 text-slate-400">{s.phone}</span>}
-                  {s.notes && <span className="ml-2 text-slate-400">· {s.notes}</span>}
+                  <span className="font-medium text-ink-soft">{s.name}</span>
+                  {s.phone && <span className="ml-2 text-faint">{s.phone}</span>}
+                  {s.notes && <span className="ml-2 text-faint">· {s.notes}</span>}
                 </span>
-                <button className="text-slate-400 hover:text-red-600" onClick={() => remove(s.id)} title="Eliminar">
+                <button className="text-faint hover:text-danger" onClick={() => remove(s.id)} title="Eliminar">
                   ✕
                 </button>
               </li>

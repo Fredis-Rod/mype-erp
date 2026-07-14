@@ -24,17 +24,17 @@ function CatalogView() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-800">Productos</h1>
-        <p className="text-sm text-slate-500">Existencias y precios de venta.</p>
+        <h1 className="text-2xl font-bold text-ink">Productos</h1>
+        <p className="text-sm text-label">Existencias y precios de venta.</p>
       </div>
       <Card>
         {loading ? (
-          <p className="text-sm text-slate-400">Cargando…</p>
+          <p className="text-sm text-faint">Cargando…</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-slate-500">
+                <tr className="text-left text-[11.5px] font-semibold uppercase tracking-wide text-faint">
                   <th className="py-2">Producto</th>
                   <th>Categoría</th>
                   <th className="text-right">Precio</th>
@@ -43,11 +43,11 @@ function CatalogView() {
               </thead>
               <tbody>
                 {rows.map((p) => (
-                  <tr key={p.id} className="border-t border-slate-100">
+                  <tr key={p.id} className="border-t border-page">
                     <td className="py-2">{p.name}</td>
-                    <td className="text-slate-500">{p.category ?? '—'}</td>
+                    <td className="text-label">{p.category ?? '—'}</td>
                     <td className="text-right">{fmtMoney(p.sale_price)}</td>
-                    <td className={`text-right ${p.stock_qty <= p.min_stock ? 'text-red-600 font-medium' : ''}`}>
+                    <td className={`text-right ${p.stock_qty <= p.min_stock ? 'text-danger font-medium' : ''}`}>
                       {fmtQty(p.stock_qty)} {p.unit}
                     </td>
                   </tr>
@@ -197,8 +197,8 @@ function AdminView() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-800">Productos</h1>
-          <p className="text-sm text-slate-500">
+          <h1 className="text-2xl font-bold text-ink">Productos</h1>
+          <p className="text-sm text-label">
             El stock y el costo promedio se actualizan solos con cada compra.
           </p>
         </div>
@@ -207,7 +207,7 @@ function AdminView() {
 
       {form && (
         <Card>
-          <h2 className="mb-4 font-medium text-slate-800">
+          <h2 className="mb-4 font-semibold text-ink">
             {form.id ? 'Editar producto' : 'Nuevo producto'}
           </h2>
           <form onSubmit={save} className="grid gap-4 sm:grid-cols-2">
@@ -232,13 +232,13 @@ function AdminView() {
               <TextInput type="number" step="0.001" min="0" value={form.min_stock} onChange={(e) => setForm({ ...form, min_stock: e.target.value })} />
             </Field>
             <div className="sm:col-span-2">
-              <span className="mb-1 block text-sm font-medium text-slate-700">Proveedores</span>
+              <span className="mb-1 block text-sm font-medium text-ink-soft">Proveedores</span>
               {suppliers.length === 0 ? (
-                <p className="text-sm text-slate-400">Aún no hay proveedores. Puedes agregarlos en el módulo Proveedores.</p>
+                <p className="text-sm text-faint">Aún no hay proveedores. Puedes agregarlos en el módulo Proveedores.</p>
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {suppliers.map((s) => (
-                    <label key={s.id} className={`cursor-pointer rounded-full border px-3 py-1 text-sm ${form.supplierIds.has(s.id) ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-slate-300 text-slate-600'}`}>
+                    <label key={s.id} className={`cursor-pointer rounded-full border px-3 py-1 text-sm ${form.supplierIds.has(s.id) ? 'border-brand bg-brand-soft text-brand-dark' : 'border-input-line text-ink-soft'}`}>
                       <input type="checkbox" className="mr-1 hidden" checked={form.supplierIds.has(s.id)} onChange={() => toggleSupplier(s.id)} />
                       {s.name}
                     </label>
@@ -246,7 +246,7 @@ function AdminView() {
                 </div>
               )}
             </div>
-            <label className="flex items-center gap-2 text-sm text-slate-700 sm:col-span-2">
+            <label className="flex items-center gap-2 text-sm text-ink-soft sm:col-span-2">
               <input type="checkbox" checked={form.active} onChange={(e) => setForm({ ...form, active: e.target.checked })} />
               Activo
             </label>
@@ -261,14 +261,14 @@ function AdminView() {
 
       <Card>
         {loading ? (
-          <p className="text-sm text-slate-400">Cargando…</p>
+          <p className="text-sm text-faint">Cargando…</p>
         ) : products.length === 0 ? (
-          <p className="text-sm text-slate-400">Aún no hay productos. Crea el primero con “Nuevo producto”.</p>
+          <p className="text-sm text-faint">Aún no hay productos. Crea el primero con “Nuevo producto”.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-slate-500">
+                <tr className="text-left text-[11.5px] font-semibold uppercase tracking-wide text-faint">
                   <th className="py-2">Producto</th>
                   <th>Categoría</th>
                   <th className="text-right">Precio</th>
@@ -279,20 +279,20 @@ function AdminView() {
               </thead>
               <tbody>
                 {products.map((p) => (
-                  <tr key={p.id} className="border-t border-slate-100">
+                  <tr key={p.id} className="border-t border-page">
                     <td className="py-2">
                       {p.name}
-                      {!p.active && <span className="ml-2 rounded bg-slate-100 px-1.5 text-xs text-slate-400">inactivo</span>}
-                      {p.sku && <span className="ml-2 text-xs text-slate-400">{p.sku}</span>}
+                      {!p.active && <span className="ml-2 rounded bg-page px-1.5 text-xs text-faint">inactivo</span>}
+                      {p.sku && <span className="ml-2 text-xs text-faint">{p.sku}</span>}
                     </td>
-                    <td className="text-slate-500">{p.category ?? '—'}</td>
+                    <td className="text-label">{p.category ?? '—'}</td>
                     <td className="text-right">{fmtMoney(p.sale_price)}</td>
-                    <td className="text-right text-slate-500">{fmtMoney(p.avg_cost)}</td>
-                    <td className={`text-right ${p.stock_qty <= p.min_stock ? 'font-medium text-red-600' : ''}`}>
+                    <td className="text-right text-label">{fmtMoney(p.avg_cost)}</td>
+                    <td className={`text-right ${p.stock_qty <= p.min_stock ? 'font-medium text-danger' : ''}`}>
                       {fmtQty(p.stock_qty)} {p.unit}
                     </td>
                     <td className="text-right">
-                      <button className="text-emerald-600 hover:underline" onClick={() => startEdit(p)}>Editar</button>
+                      <button className="text-brand-dark hover:underline" onClick={() => startEdit(p)}>Editar</button>
                     </td>
                   </tr>
                 ))}

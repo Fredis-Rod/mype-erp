@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../../auth/AuthProvider'
-import { Alert, Button, Card, Field, TextInput } from '../../components/ui'
+import { Alert, Button, Field, TextInput } from '../../components/ui'
 
 type Mode = 'login' | 'signup' | 'recover'
 
@@ -9,6 +9,7 @@ export default function LoginPage() {
   const [mode, setMode] = useState<Mode>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [remember, setRemember] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -42,52 +43,57 @@ export default function LoginPage() {
     }
   }
 
+  const title = mode === 'login' ? 'Iniciar sesión' : mode === 'signup' ? 'Crear cuenta' : 'Recuperar contraseña'
+  const subtitle =
+    mode === 'login'
+      ? 'Ingresa tus datos para continuar'
+      : mode === 'signup'
+        ? 'Crea tu cuenta para empezar a usar MYPE ERP'
+        : 'Te enviaremos un enlace a tu correo'
+
   return (
-    <div className="grid min-h-screen place-items-center bg-slate-50 p-6">
-      <div className="w-full max-w-sm">
-        <div className="mb-6 flex items-center justify-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-xl bg-emerald-600 font-bold text-white">
-            M
+    <div className="flex min-h-screen font-sans">
+      {/* Panel izquierdo — marca */}
+      <div className="hidden w-[460px] shrink-0 flex-col justify-between bg-brand-dark p-12 text-white md:flex">
+        <div className="flex items-center gap-2.5">
+          <div className="grid h-[34px] w-[34px] place-items-center rounded-[9px] bg-white/20 text-base font-bold">M</div>
+          <span className="text-base font-semibold">MYPE ERP</span>
+        </div>
+        <div>
+          <div className="mb-3.5 text-[28px] font-bold leading-tight">
+            Gestiona tu negocio
+            <br />
+            desde un solo lugar
           </div>
-          <div>
-            <h1 className="text-lg font-semibold text-slate-800">MYPE ERP</h1>
-            <p className="text-xs text-slate-500">Inventario · Ventas · Finanzas</p>
+          <div className="text-sm leading-relaxed text-white/80">
+            Ventas, inventario, compras y finanzas — todo en un panel simple, pensado para emprendedores.
           </div>
         </div>
+        <div className="text-xs text-white/60">© 2026 MYPE ERP</div>
+      </div>
 
-        <Card>
-          {mode !== 'recover' && (
-            <div className="mb-4 flex rounded-lg bg-slate-100 p-1 text-sm">
-              <button
-                className={`flex-1 rounded-md py-1.5 font-medium ${mode === 'login' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500'}`}
-                onClick={() => { setMode('login'); setError(null); setNotice(null) }}
-                type="button"
-              >
-                Iniciar sesión
-              </button>
-              <button
-                className={`flex-1 rounded-md py-1.5 font-medium ${mode === 'signup' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500'}`}
-                onClick={() => { setMode('signup'); setError(null); setNotice(null) }}
-                type="button"
-              >
-                Crear cuenta
-              </button>
-            </div>
-          )}
+      {/* Panel derecho — formulario */}
+      <div className="flex flex-1 items-center justify-center bg-white p-6">
+        <div className="w-full max-w-[360px]">
+          <div className="mb-6 flex items-center gap-2.5 md:hidden">
+            <div className="grid h-[34px] w-[34px] place-items-center rounded-[9px] bg-brand text-base font-bold text-white">M</div>
+            <span className="text-base font-semibold text-ink">MYPE ERP</span>
+          </div>
 
-          {mode === 'recover' && (
-            <h2 className="mb-4 text-sm font-medium text-slate-700">Recuperar contraseña</h2>
-          )}
+          <div className="mb-5">
+            <div className="mb-1.5 text-[22px] font-bold text-ink">{title}</div>
+            <div className="text-[13.5px] text-label">{subtitle}</div>
+          </div>
 
-          <form onSubmit={submit} className="space-y-4">
-            <Field label="Correo">
+          <form onSubmit={submit} className="flex flex-col gap-[22px]">
+            <Field label="Correo electrónico">
               <TextInput
                 type="email"
                 required
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu@correo.com"
+                placeholder="nombre@miempresa.com"
               />
             </Field>
 
@@ -100,19 +106,30 @@ export default function LoginPage() {
                   autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="••••••••"
                 />
               </Field>
             )}
 
             {mode === 'login' && (
-              <button
-                type="button"
-                className="text-xs text-emerald-600 hover:underline"
-                onClick={() => { setMode('recover'); setError(null); setNotice(null) }}
-              >
-                ¿Olvidaste tu contraseña?
-              </button>
+              <div className="flex items-center justify-between text-[12.5px]">
+                <label className="flex items-center gap-2 text-ink-soft">
+                  <input
+                    type="checkbox"
+                    checked={remember}
+                    onChange={(e) => setRemember(e.target.checked)}
+                    className="h-[15px] w-[15px] rounded border-[#cdd8d1] accent-brand-dark"
+                  />
+                  Recordarme
+                </label>
+                <button
+                  type="button"
+                  className="font-semibold text-brand-dark hover:underline"
+                  onClick={() => { setMode('recover'); setError(null); setNotice(null) }}
+                >
+                  ¿Olvidaste tu contraseña?
+                </button>
+              </div>
             )}
 
             {error && <Alert kind="error">{error}</Alert>}
@@ -122,28 +139,38 @@ export default function LoginPage() {
               {busy
                 ? 'Procesando…'
                 : mode === 'login'
-                  ? 'Entrar'
+                  ? 'Iniciar sesión'
                   : mode === 'signup'
                     ? 'Registrarme'
                     : 'Enviar enlace'}
             </Button>
 
-            {mode === 'recover' && (
-              <button
-                type="button"
-                className="w-full text-center text-xs text-slate-500 hover:underline"
-                onClick={() => { setMode('login'); setError(null); setNotice(null) }}
-              >
-                Volver a iniciar sesión
-              </button>
-            )}
+            <div className="text-center text-[13px] text-label">
+              {mode === 'login' && (
+                <>
+                  ¿No tienes cuenta?{' '}
+                  <button type="button" className="font-semibold text-brand-dark hover:underline" onClick={() => { setMode('signup'); setError(null); setNotice(null) }}>
+                    Regístrate
+                  </button>
+                </>
+              )}
+              {mode === 'signup' && (
+                <button type="button" className="font-semibold text-brand-dark hover:underline" onClick={() => { setMode('login'); setError(null); setNotice(null) }}>
+                  Ya tengo cuenta, iniciar sesión
+                </button>
+              )}
+              {mode === 'recover' && (
+                <button type="button" className="font-semibold text-brand-dark hover:underline" onClick={() => { setMode('login'); setError(null); setNotice(null) }}>
+                  Volver a iniciar sesión
+                </button>
+              )}
+            </div>
           </form>
-        </Card>
 
-        <p className="mt-4 text-center text-xs text-slate-400">
-          El administrador de un negocio agrega a sus empleados por correo, después de que ellos
-          creen su cuenta aquí.
-        </p>
+          <p className="mt-6 text-center text-xs text-faint">
+            El administrador de un negocio agrega a sus empleados por correo, después de que ellos creen su cuenta aquí.
+          </p>
+        </div>
       </div>
     </div>
   )

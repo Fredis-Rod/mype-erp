@@ -38,28 +38,28 @@ function useProducts() {
 function InventoryReport() {
   const { products, loading } = useProducts()
   const totalValue = useMemo(() => products.reduce((s, p) => s + p.stock_qty * p.avg_cost, 0), [products])
-  if (loading) return <p className="text-sm text-slate-400">Cargando…</p>
+  if (loading) return <p className="text-sm text-faint">Cargando…</p>
   return (
     <div className="space-y-4">
       <Card>
-        <div className="text-sm text-slate-500">Valor total del inventario (a costo)</div>
-        <div className="text-2xl font-semibold text-slate-800">{fmtMoney(totalValue)}</div>
+        <div className="text-sm text-label">Valor total del inventario (a costo)</div>
+        <div className="text-2xl font-bold text-ink">{fmtMoney(totalValue)}</div>
       </Card>
       <Card>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-slate-500">
+              <tr className="text-left text-[11.5px] font-semibold uppercase tracking-wide text-faint">
                 <th className="py-2">Producto</th><th className="text-right">Existencias</th>
                 <th className="text-right">Costo prom.</th><th className="text-right">Valor</th>
               </tr>
             </thead>
             <tbody>
               {products.map((p) => (
-                <tr key={p.id} className="border-t border-slate-100">
+                <tr key={p.id} className="border-t border-page">
                   <td className="py-2">{p.name}</td>
                   <td className="text-right">{fmtQty(p.stock_qty)} {p.unit}</td>
-                  <td className="text-right text-slate-500">{fmtMoney(p.avg_cost)}</td>
+                  <td className="text-right text-label">{fmtMoney(p.avg_cost)}</td>
                   <td className="text-right font-medium">{fmtMoney(p.stock_qty * p.avg_cost)}</td>
                 </tr>
               ))}
@@ -74,26 +74,26 @@ function InventoryReport() {
 function LowStockReport() {
   const { products, loading } = useProducts()
   const low = products.filter((p) => p.stock_qty <= p.min_stock)
-  if (loading) return <p className="text-sm text-slate-400">Cargando…</p>
+  if (loading) return <p className="text-sm text-faint">Cargando…</p>
   return (
     <Card>
-      <h2 className="mb-3 font-medium text-slate-800">Productos en o por debajo del mínimo</h2>
+      <h2 className="mb-3 font-semibold text-ink">Productos en o por debajo del mínimo</h2>
       {low.length === 0 ? (
-        <p className="text-sm text-slate-400">Todo el inventario está en niveles saludables. 🎉</p>
+        <p className="text-sm text-faint">Todo el inventario está en niveles saludables. 🎉</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-slate-500">
+              <tr className="text-left text-[11.5px] font-semibold uppercase tracking-wide text-faint">
                 <th className="py-2">Producto</th><th className="text-right">Existencias</th><th className="text-right">Mínimo</th>
               </tr>
             </thead>
             <tbody>
               {low.map((p) => (
-                <tr key={p.id} className="border-t border-slate-100">
+                <tr key={p.id} className="border-t border-page">
                   <td className="py-2">{p.name}</td>
-                  <td className="text-right font-medium text-red-600">{fmtQty(p.stock_qty)} {p.unit}</td>
-                  <td className="text-right text-slate-500">{fmtQty(p.min_stock)} {p.unit}</td>
+                  <td className="text-right font-medium text-danger">{fmtQty(p.stock_qty)} {p.unit}</td>
+                  <td className="text-right text-label">{fmtQty(p.min_stock)} {p.unit}</td>
                 </tr>
               ))}
             </tbody>
@@ -109,11 +109,11 @@ function PeriodPicker({ from, to, setFrom, setTo }: { from: string; to: string; 
   return (
     <div className="flex flex-wrap items-end gap-3">
       <label className="block text-sm">
-        <span className="mb-1 block text-slate-600">Desde</span>
+        <span className="mb-1 block text-ink-soft">Desde</span>
         <TextInput type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
       </label>
       <label className="block text-sm">
-        <span className="mb-1 block text-slate-600">Hasta</span>
+        <span className="mb-1 block text-ink-soft">Hasta</span>
         <TextInput type="date" value={to} onChange={(e) => setTo(e.target.value)} />
       </label>
     </div>
@@ -153,17 +153,17 @@ function SalesReport() {
     <div className="space-y-4">
       <PeriodPicker from={from} to={to} setFrom={setFrom} setTo={setTo} />
       {loading ? (
-        <p className="text-sm text-slate-400">Cargando…</p>
+        <p className="text-sm text-faint">Cargando…</p>
       ) : (
         <>
           <div className="grid gap-4 sm:grid-cols-4">
-            <Card><div className="text-sm text-slate-500">Total ventas</div><div className="text-xl font-semibold">{fmtMoney(totalSales)}</div></Card>
-            <Card><div className="text-sm text-slate-500">Contado</div><div className="text-xl font-semibold">{fmtMoney(cash)}</div></Card>
-            <Card><div className="text-sm text-slate-500">Crédito</div><div className="text-xl font-semibold">{fmtMoney(credit)}</div></Card>
-            <Card><div className="text-sm text-slate-500">Descuentos otorgados</div><div className="text-xl font-semibold">{fmtMoney(totalDiscount)}</div></Card>
+            <Card><div className="text-sm text-label">Total ventas</div><div className="text-xl font-semibold">{fmtMoney(totalSales)}</div></Card>
+            <Card><div className="text-sm text-label">Contado</div><div className="text-xl font-semibold">{fmtMoney(cash)}</div></Card>
+            <Card><div className="text-sm text-label">Crédito</div><div className="text-xl font-semibold">{fmtMoney(credit)}</div></Card>
+            <Card><div className="text-sm text-label">Descuentos otorgados</div><div className="text-xl font-semibold">{fmtMoney(totalDiscount)}</div></Card>
           </div>
           <Card>
-            <div className="text-sm text-slate-500">{sales.length} venta(s) en el periodo</div>
+            <div className="text-sm text-label">{sales.length} venta(s) en el periodo</div>
           </Card>
         </>
       )}
@@ -212,15 +212,15 @@ function IncomeStatement() {
     <div className="space-y-4">
       <PeriodPicker from={from} to={to} setFrom={setFrom} setTo={setTo} />
       {loading ? (
-        <p className="text-sm text-slate-400">Cargando…</p>
+        <p className="text-sm text-faint">Cargando…</p>
       ) : (
         <Card className="max-w-md">
           <dl className="space-y-2 text-sm">
-            <div className="flex justify-between"><dt className="text-slate-600">Ventas</dt><dd className="font-medium">{fmtMoney(revenue)}</dd></div>
-            <div className="flex justify-between"><dt className="text-slate-600">(−) Costo de ventas</dt><dd className="font-medium text-red-600">{fmtMoney(cogs)}</dd></div>
-            <div className="flex justify-between border-t border-slate-100 pt-2"><dt className="font-medium text-slate-700">Utilidad bruta</dt><dd className="font-semibold">{fmtMoney(grossProfit)}</dd></div>
-            <div className="flex justify-between"><dt className="text-slate-600">(−) Gastos</dt><dd className="font-medium text-red-600">{fmtMoney(expenses)}</dd></div>
-            <div className="flex justify-between border-t border-slate-200 pt-2 text-base"><dt className="font-semibold text-slate-800">Utilidad neta</dt><dd className={`font-bold ${netProfit >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>{fmtMoney(netProfit)}</dd></div>
+            <div className="flex justify-between"><dt className="text-ink-soft">Ventas</dt><dd className="font-medium">{fmtMoney(revenue)}</dd></div>
+            <div className="flex justify-between"><dt className="text-ink-soft">(−) Costo de ventas</dt><dd className="font-medium text-danger">{fmtMoney(cogs)}</dd></div>
+            <div className="flex justify-between border-t border-page pt-2"><dt className="font-medium text-ink-soft">Utilidad bruta</dt><dd className="font-semibold">{fmtMoney(grossProfit)}</dd></div>
+            <div className="flex justify-between"><dt className="text-ink-soft">(−) Gastos</dt><dd className="font-medium text-danger">{fmtMoney(expenses)}</dd></div>
+            <div className="flex justify-between border-t border-line pt-2 text-base"><dt className="font-semibold text-ink">Utilidad neta</dt><dd className={`font-bold ${netProfit >= 0 ? 'text-brand-dark' : 'text-danger'}`}>{fmtMoney(netProfit)}</dd></div>
           </dl>
         </Card>
       )}
@@ -233,15 +233,15 @@ export default function ReportsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-800">Reportes</h1>
-        <p className="text-sm text-slate-500">Lo esencial para entender tu negocio de un vistazo.</p>
+        <h1 className="text-2xl font-bold text-ink">Reportes</h1>
+        <p className="text-sm text-label">Lo esencial para entender tu negocio de un vistazo.</p>
       </div>
-      <div className="flex flex-wrap gap-2 border-b border-slate-200">
+      <div className="flex flex-wrap gap-2 border-b border-line">
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`-mb-px border-b-2 px-3 py-2 text-sm font-medium ${tab === t.id ? 'border-emerald-600 text-emerald-700' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            className={`-mb-px border-b-2 px-3 py-2 text-sm font-medium ${tab === t.id ? 'border-brand-dark text-brand-dark' : 'border-transparent text-label hover:text-ink-soft'}`}
           >
             {t.label}
           </button>

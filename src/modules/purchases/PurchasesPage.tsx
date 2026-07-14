@@ -120,8 +120,8 @@ export default function PurchasesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-800">Compras (ingreso de inventario)</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-2xl font-bold text-ink">Compras (ingreso de inventario)</h1>
+        <p className="text-sm text-label">
           Cada compra aumenta el stock y recalcula el costo promedio. Las compras al crédito generan una cuenta por pagar.
         </p>
       </div>
@@ -130,7 +130,7 @@ export default function PurchasesPage() {
         <form onSubmit={submit} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-3">
             <Field label="Proveedor">
-              <select className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" value={supplierId} onChange={(e) => setSupplierId(e.target.value)}>
+              <select className="w-full rounded-lg border border-input-line px-3 py-2 text-sm" value={supplierId} onChange={(e) => setSupplierId(e.target.value)}>
                 <option value="">(Sin proveedor)</option>
                 {suppliers.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
@@ -139,7 +139,7 @@ export default function PurchasesPage() {
               <TextInput type="date" value={date} onChange={(e) => setDate(e.target.value)} />
             </Field>
             <Field label="Forma de pago">
-              <select className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" value={paymentType} onChange={(e) => setPaymentType(e.target.value as 'contado' | 'credito')}>
+              <select className="w-full rounded-lg border border-input-line px-3 py-2 text-sm" value={paymentType} onChange={(e) => setPaymentType(e.target.value as 'contado' | 'credito')}>
                 <option value="contado">Contado</option>
                 <option value="credito">Crédito</option>
               </select>
@@ -148,25 +148,25 @@ export default function PurchasesPage() {
 
           {/* Renglones */}
           <div className="space-y-2">
-            <div className="hidden gap-2 text-xs font-medium text-slate-500 sm:grid sm:grid-cols-[1fr_100px_120px_40px]">
+            <div className="hidden gap-2 text-xs font-medium text-label sm:grid sm:grid-cols-[1fr_100px_120px_40px]">
               <span>Producto</span><span>Cantidad</span><span>Costo unitario</span><span></span>
             </div>
             {lines.map((l, i) => (
               <div key={i} className="grid gap-2 sm:grid-cols-[1fr_100px_120px_40px]">
-                <select className="w-full min-w-0 rounded-lg border border-slate-300 px-2 py-2 text-sm" value={l.product_id} onChange={(e) => onPickProduct(i, e.target.value)}>
+                <select className="w-full min-w-0 rounded-lg border border-input-line px-2 py-2 text-sm" value={l.product_id} onChange={(e) => onPickProduct(i, e.target.value)}>
                   <option value="">Elegir producto…</option>
                   {products.map((p) => <option key={p.id} value={p.id}>{p.name} ({p.unit})</option>)}
                 </select>
                 <TextInput type="number" step="0.001" min="0" placeholder="Cant." value={l.qty} onChange={(e) => setLine(i, { qty: e.target.value })} />
                 <TextInput type="number" step="0.0001" min="0" placeholder="Costo" value={l.unit_cost} onChange={(e) => setLine(i, { unit_cost: e.target.value })} />
-                <button type="button" className="text-slate-400 hover:text-red-600" onClick={() => removeLine(i)}>✕</button>
+                <button type="button" className="text-faint hover:text-danger" onClick={() => removeLine(i)}>✕</button>
               </div>
             ))}
-            <button type="button" className="text-sm text-emerald-600 hover:underline" onClick={addLine}>+ Agregar renglón</button>
+            <button type="button" className="text-sm text-brand-dark hover:underline" onClick={addLine}>+ Agregar renglón</button>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
-            <div className="text-lg font-semibold text-slate-800">Total: {fmtMoney(total)}</div>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-page pt-4">
+            <div className="text-lg font-bold text-ink">Total: {fmtMoney(total)}</div>
             {paymentType === 'credito' && (
               <Field label="Abono inicial (pagado ahora)">
                 <TextInput type="number" step="0.01" min="0" value={amountPaid} onChange={(e) => setAmountPaid(e.target.value)} placeholder="0.00" className="w-40" />
@@ -180,28 +180,28 @@ export default function PurchasesPage() {
       </Card>
 
       <Card>
-        <h2 className="mb-3 font-medium text-slate-800">Compras recientes</h2>
+        <h2 className="mb-3 font-semibold text-ink">Compras recientes</h2>
         {loading ? (
-          <p className="text-sm text-slate-400">Cargando…</p>
+          <p className="text-sm text-faint">Cargando…</p>
         ) : history.length === 0 ? (
-          <p className="text-sm text-slate-400">Aún no hay compras registradas.</p>
+          <p className="text-sm text-faint">Aún no hay compras registradas.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-slate-500">
+                <tr className="text-left text-[11.5px] font-semibold uppercase tracking-wide text-faint">
                   <th className="py-2">Fecha</th><th>Proveedor</th><th>Pago</th>
                   <th className="text-right">Total</th><th className="text-right">Pagado</th><th className="text-right">Saldo</th>
                 </tr>
               </thead>
               <tbody>
                 {history.map((p) => (
-                  <tr key={p.id} className="border-t border-slate-100">
+                  <tr key={p.id} className="border-t border-page">
                     <td className="py-2">{fmtDate(p.date)}</td>
-                    <td className="text-slate-600">{supplierName(p.supplier_id)}</td>
-                    <td><span className={`rounded px-1.5 py-0.5 text-xs ${p.payment_type === 'credito' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>{p.payment_type}</span></td>
+                    <td className="text-ink-soft">{supplierName(p.supplier_id)}</td>
+                    <td><span className={`rounded px-1.5 py-0.5 text-xs ${p.payment_type === 'credito' ? 'bg-warn-soft text-warn' : 'bg-page text-ink-soft'}`}>{p.payment_type}</span></td>
                     <td className="text-right">{fmtMoney(p.total)}</td>
-                    <td className="text-right text-slate-500">{fmtMoney(p.amount_paid + (laterPaid[p.id] ?? 0))}</td>
+                    <td className="text-right text-label">{fmtMoney(p.amount_paid + (laterPaid[p.id] ?? 0))}</td>
                     <td className="text-right font-medium">{fmtMoney(p.total - p.amount_paid - (laterPaid[p.id] ?? 0))}</td>
                   </tr>
                 ))}

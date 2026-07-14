@@ -89,24 +89,24 @@ export default function PayablesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-800">Cuentas por pagar</h1>
-        <p className="text-sm text-slate-500">Lo que le debes a tus proveedores por compras al crédito.</p>
+        <h1 className="text-2xl font-bold text-ink">Cuentas por pagar</h1>
+        <p className="text-sm text-label">Lo que le debes a tus proveedores por compras al crédito.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Card className="sm:col-span-1">
-          <div className="text-sm text-slate-500">Deuda total</div>
-          <div className="text-2xl font-semibold text-slate-800">{fmtMoney(totalDebt)}</div>
+          <div className="text-sm text-label">Deuda total</div>
+          <div className="text-2xl font-bold text-ink">{fmtMoney(totalDebt)}</div>
         </Card>
         <Card className="sm:col-span-2">
-          <div className="mb-2 text-sm font-medium text-slate-700">Por proveedor</div>
+          <div className="mb-2 text-sm font-medium text-ink-soft">Por proveedor</div>
           {bySupplier.length === 0 ? (
-            <p className="text-sm text-slate-400">Sin saldos pendientes.</p>
+            <p className="text-sm text-faint">Sin saldos pendientes.</p>
           ) : (
             <ul className="space-y-1 text-sm">
               {bySupplier.map(([name, amt]) => (
                 <li key={name} className="flex justify-between">
-                  <span className="text-slate-600">{name}</span>
+                  <span className="text-ink-soft">{name}</span>
                   <span className="font-medium">{fmtMoney(amt)}</span>
                 </li>
               ))}
@@ -118,25 +118,25 @@ export default function PayablesPage() {
       {error && <Alert kind="error">{error}</Alert>}
 
       <Card>
-        <h2 className="mb-3 font-medium text-slate-800">Compras al crédito pendientes</h2>
+        <h2 className="mb-3 font-semibold text-ink">Compras al crédito pendientes</h2>
         {loading ? (
-          <p className="text-sm text-slate-400">Cargando…</p>
+          <p className="text-sm text-faint">Cargando…</p>
         ) : pending.length === 0 ? (
-          <p className="text-sm text-slate-400">No tienes cuentas por pagar. 🎉</p>
+          <p className="text-sm text-faint">No tienes cuentas por pagar. 🎉</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-slate-500">
+                <tr className="text-left text-[11.5px] font-semibold uppercase tracking-wide text-faint">
                   <th className="py-2">Fecha</th><th>Proveedor</th>
                   <th className="text-right">Total</th><th className="text-right">Saldo</th><th></th>
                 </tr>
               </thead>
               <tbody>
                 {pending.map((p) => (
-                  <tr key={p.id} className="border-t border-slate-100 align-top">
+                  <tr key={p.id} className="border-t border-page align-top">
                     <td className="py-2">{fmtDate(p.date)}</td>
-                    <td className="text-slate-600">{supplierName(p.supplier_id)}</td>
+                    <td className="text-ink-soft">{supplierName(p.supplier_id)}</td>
                     <td className="text-right">{fmtMoney(p.total)}</td>
                     <td className="text-right font-medium">{fmtMoney(balanceOf(p))}</td>
                     <td className="text-right">
@@ -144,10 +144,10 @@ export default function PayablesPage() {
                         <div className="flex items-center justify-end gap-1">
                           <TextInput type="number" step="0.01" min="0" placeholder="Monto" value={amount} onChange={(e) => setAmount(e.target.value)} className="w-24" />
                           <Button type="button" disabled={busy} onClick={() => pay(p.id)}>{busy ? '…' : 'Pagar'}</Button>
-                          <button className="px-1 text-slate-400" onClick={() => { setPayingId(null); setAmount('') }}>✕</button>
+                          <button className="px-1 text-faint" onClick={() => { setPayingId(null); setAmount('') }}>✕</button>
                         </div>
                       ) : (
-                        <button className="text-emerald-600 hover:underline" onClick={() => { setPayingId(p.id); setAmount(String(balanceOf(p))) }}>Registrar pago</button>
+                        <button className="text-brand-dark hover:underline" onClick={() => { setPayingId(p.id); setAmount(String(balanceOf(p))) }}>Registrar pago</button>
                       )}
                     </td>
                   </tr>

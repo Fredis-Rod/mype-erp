@@ -51,46 +51,46 @@ export default function CashPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-800">Caja</h1>
-        <p className="text-sm text-slate-500">Movimientos de efectivo. Tarjeta y transferencia no entran a la caja física.</p>
+        <h1 className="text-2xl font-bold text-ink">Caja</h1>
+        <p className="text-sm text-label">Movimientos de efectivo. Tarjeta y transferencia no entran a la caja física.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
-          <div className="text-sm text-slate-500">Saldo en caja</div>
-          <div className="text-2xl font-semibold text-slate-800">{fmtMoney(balance)}</div>
+          <div className="text-sm text-label">Saldo en caja</div>
+          <div className="text-2xl font-bold text-ink">{fmtMoney(balance)}</div>
         </Card>
         <Card>
-          <div className="text-sm text-slate-500">Entradas</div>
-          <div className="text-xl font-semibold text-emerald-600">{fmtMoney(inflow)}</div>
+          <div className="text-sm text-label">Entradas</div>
+          <div className="text-xl font-semibold text-brand-dark">{fmtMoney(inflow)}</div>
         </Card>
         <Card>
-          <div className="text-sm text-slate-500">Salidas</div>
-          <div className="text-xl font-semibold text-red-600">{fmtMoney(outflow)}</div>
+          <div className="text-sm text-label">Salidas</div>
+          <div className="text-xl font-semibold text-danger">{fmtMoney(outflow)}</div>
         </Card>
       </div>
 
       <Card>
-        <h2 className="mb-3 font-medium text-slate-800">Movimientos recientes</h2>
+        <h2 className="mb-3 font-semibold text-ink">Movimientos recientes</h2>
         {loading ? (
-          <p className="text-sm text-slate-400">Cargando…</p>
+          <p className="text-sm text-faint">Cargando…</p>
         ) : rows.length === 0 ? (
-          <p className="text-sm text-slate-400">Aún no hay movimientos de caja.</p>
+          <p className="text-sm text-faint">Aún no hay movimientos de caja.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-slate-500">
+                <tr className="text-left text-[11.5px] font-semibold uppercase tracking-wide text-faint">
                   <th className="py-2">Fecha</th><th>Concepto</th><th>Referencia</th><th className="text-right">Monto</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((m) => (
-                  <tr key={m.id} className="border-t border-slate-100">
+                  <tr key={m.id} className="border-t border-page">
                     <td className="py-2">{fmtDate(m.date)}</td>
                     <td>{LABELS[m.type] ?? m.type}</td>
-                    <td className="text-slate-400">{m.reference}</td>
-                    <td className={`text-right font-medium ${m.amount >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                    <td className="text-faint">{m.reference}</td>
+                    <td className={`text-right font-medium ${m.amount >= 0 ? 'text-brand-dark' : 'text-danger'}`}>
                       {m.amount >= 0 ? '+' : ''}{fmtMoney(m.amount)}
                     </td>
                   </tr>

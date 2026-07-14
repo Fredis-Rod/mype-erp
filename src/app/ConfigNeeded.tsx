@@ -3,10 +3,10 @@ import { Card } from '../components/ui'
 /** Se muestra cuando faltan las credenciales de Supabase (.env.local). */
 export default function ConfigNeeded() {
   return (
-    <div className="grid min-h-screen place-items-center bg-slate-50 p-6">
+    <div className="grid min-h-screen place-items-center bg-page p-6">
       <div className="w-full max-w-lg">
         <Card>
-          <h1 className="text-lg font-semibold text-slate-800">Falta conectar Supabase</h1>
+          <h1 className="text-lg font-bold text-ink">Falta conectar Supabase</h1>
           <p className="mt-1 text-sm text-slate-600">
             La app necesita las credenciales de tu proyecto Supabase para funcionar. Crea el archivo
             <code className="mx-1 rounded bg-slate-100 px-1">.env.local</code> en la raíz del

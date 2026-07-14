@@ -20,11 +20,11 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="grid min-h-screen place-items-center bg-slate-50 p-6">
+    <div className="grid min-h-screen place-items-center bg-page p-6">
       <div className="w-full max-w-md">
         <Card>
-          <h1 className="text-lg font-semibold text-slate-800">Crea tu negocio</h1>
-          <p className="mt-1 mb-5 text-sm text-slate-500">
+          <h1 className="text-lg font-bold text-ink">Crea tu negocio</h1>
+          <p className="mt-1 mb-5 text-sm text-label">
             Este será tu espacio de trabajo. Quedarás como administrador y podrás agregar a un
             empleado después.
           </p>
@@ -44,9 +44,9 @@ export default function Onboarding() {
             </Button>
           </form>
         </Card>
-        <div className="mt-4 flex items-center justify-between px-1 text-xs text-slate-400">
+        <div className="mt-4 flex items-center justify-between px-1 text-xs text-faint">
           <span>{user?.email}</span>
-          <button className="hover:text-slate-600" onClick={() => signOut()}>
+          <button className="hover:text-ink-soft" onClick={() => signOut()}>
             Cerrar sesión
           </button>
         </div>

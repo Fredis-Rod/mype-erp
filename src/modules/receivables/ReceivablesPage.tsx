@@ -85,24 +85,24 @@ export default function ReceivablesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-800">Cuentas por cobrar</h1>
-        <p className="text-sm text-slate-500">Lo que te deben tus clientes por ventas al crédito (fiado).</p>
+        <h1 className="text-2xl font-bold text-ink">Cuentas por cobrar</h1>
+        <p className="text-sm text-label">Lo que te deben tus clientes por ventas al crédito (fiado).</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Card className="sm:col-span-1">
-          <div className="text-sm text-slate-500">Total por cobrar</div>
-          <div className="text-2xl font-semibold text-slate-800">{fmtMoney(totalDebt)}</div>
+          <div className="text-sm text-label">Total por cobrar</div>
+          <div className="text-2xl font-bold text-ink">{fmtMoney(totalDebt)}</div>
         </Card>
         <Card className="sm:col-span-2">
-          <div className="mb-2 text-sm font-medium text-slate-700">Por cliente</div>
+          <div className="mb-2 text-sm font-medium text-ink-soft">Por cliente</div>
           {byCustomer.length === 0 ? (
-            <p className="text-sm text-slate-400">Sin saldos pendientes.</p>
+            <p className="text-sm text-faint">Sin saldos pendientes.</p>
           ) : (
             <ul className="space-y-1 text-sm">
               {byCustomer.map(([name, amt]) => (
                 <li key={name} className="flex justify-between">
-                  <span className="text-slate-600">{name}</span>
+                  <span className="text-ink-soft">{name}</span>
                   <span className="font-medium">{fmtMoney(amt)}</span>
                 </li>
               ))}
@@ -114,25 +114,25 @@ export default function ReceivablesPage() {
       {error && <Alert kind="error">{error}</Alert>}
 
       <Card>
-        <h2 className="mb-3 font-medium text-slate-800">Ventas al crédito pendientes</h2>
+        <h2 className="mb-3 font-semibold text-ink">Ventas al crédito pendientes</h2>
         {loading ? (
-          <p className="text-sm text-slate-400">Cargando…</p>
+          <p className="text-sm text-faint">Cargando…</p>
         ) : pending.length === 0 ? (
-          <p className="text-sm text-slate-400">Nadie te debe. 🎉</p>
+          <p className="text-sm text-faint">Nadie te debe. 🎉</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-slate-500">
+                <tr className="text-left text-[11.5px] font-semibold uppercase tracking-wide text-faint">
                   <th className="py-2">Fecha</th><th>Cliente</th>
                   <th className="text-right">Total</th><th className="text-right">Saldo</th><th></th>
                 </tr>
               </thead>
               <tbody>
                 {pending.map((s) => (
-                  <tr key={s.id} className="border-t border-slate-100">
+                  <tr key={s.id} className="border-t border-page">
                     <td className="py-2">{fmtDate(s.date)}</td>
-                    <td className="text-slate-600">{customerName(s.customer_id)}</td>
+                    <td className="text-ink-soft">{customerName(s.customer_id)}</td>
                     <td className="text-right">{fmtMoney(s.total)}</td>
                     <td className="text-right font-medium">{fmtMoney(balanceOf(s))}</td>
                     <td className="text-right">
@@ -140,10 +140,10 @@ export default function ReceivablesPage() {
                         <div className="flex items-center justify-end gap-1">
                           <TextInput type="number" step="0.01" min="0" placeholder="Monto" value={amount} onChange={(e) => setAmount(e.target.value)} className="w-24" />
                           <Button type="button" disabled={busy} onClick={() => pay(s.id)}>{busy ? '…' : 'Cobrar'}</Button>
-                          <button className="px-1 text-slate-400" onClick={() => { setPayingId(null); setAmount('') }}>✕</button>
+                          <button className="px-1 text-faint" onClick={() => { setPayingId(null); setAmount('') }}>✕</button>
                         </div>
                       ) : (
-                        <button className="text-emerald-600 hover:underline" onClick={() => { setPayingId(s.id); setAmount(String(balanceOf(s))) }}>Registrar abono</button>
+                        <button className="text-brand-dark hover:underline" onClick={() => { setPayingId(s.id); setAmount(String(balanceOf(s))) }}>Registrar abono</button>
                       )}
                     </td>
                   </tr>

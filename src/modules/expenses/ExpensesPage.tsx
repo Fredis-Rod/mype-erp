@@ -76,8 +76,8 @@ export default function ExpensesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-800">Gastos</h1>
-        <p className="text-sm text-slate-500">Gastos operativos (alquiler, servicios, planilla, etc.), distintos del costo de mercadería.</p>
+        <h1 className="text-2xl font-bold text-ink">Gastos</h1>
+        <p className="text-sm text-label">Gastos operativos (alquiler, servicios, planilla, etc.), distintos del costo de mercadería.</p>
       </div>
 
       <Card>
@@ -104,31 +104,31 @@ export default function ExpensesPage() {
 
       <Card>
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-medium text-slate-800">Gastos recientes</h2>
-          <span className="text-sm text-slate-500">Total: <strong>{fmtMoney(total)}</strong></span>
+          <h2 className="font-semibold text-ink">Gastos recientes</h2>
+          <span className="text-sm text-label">Total: <strong>{fmtMoney(total)}</strong></span>
         </div>
         {loading ? (
-          <p className="text-sm text-slate-400">Cargando…</p>
+          <p className="text-sm text-faint">Cargando…</p>
         ) : rows.length === 0 ? (
-          <p className="text-sm text-slate-400">Aún no hay gastos registrados.</p>
+          <p className="text-sm text-faint">Aún no hay gastos registrados.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-slate-500">
+                <tr className="text-left text-[11.5px] font-semibold uppercase tracking-wide text-faint">
                   <th className="py-2">Fecha</th><th>Categoría</th><th>Descripción</th>
                   <th className="text-right">Monto</th><th></th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r) => (
-                  <tr key={r.id} className="border-t border-slate-100">
+                  <tr key={r.id} className="border-t border-page">
                     <td className="py-2">{fmtDate(r.date)}</td>
-                    <td className="text-slate-600">{r.category ?? '—'}</td>
-                    <td className="text-slate-500">{r.description ?? '—'}</td>
+                    <td className="text-ink-soft">{r.category ?? '—'}</td>
+                    <td className="text-label">{r.description ?? '—'}</td>
                     <td className="text-right font-medium">{fmtMoney(r.amount)}</td>
                     <td className="text-right">
-                      <button className="text-slate-400 hover:text-red-600" onClick={() => remove(r.id)}>✕</button>
+                      <button className="text-faint hover:text-danger" onClick={() => remove(r.id)}>✕</button>
                     </td>
                   </tr>
                 ))}
