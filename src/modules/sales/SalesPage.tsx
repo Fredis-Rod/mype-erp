@@ -16,11 +16,12 @@ interface CartLine {
 }
 
 export default function SalesPage() {
-  const { currentBusiness } = useBusiness()
+  const { currentBusiness, role } = useBusiness()
   const [catalog, setCatalog] = useState<CatalogProduct[]>([])
   const [customers, setCustomers] = useState<Customer[]>([])
   const [search, setSearch] = useState('')
   const [cart, setCart] = useState<CartLine[]>([])
+  const [date, setDate] = useState(today())
   const [discount, setDiscount] = useState('')
   const [paymentType, setPaymentType] = useState<'contado' | 'credito'>('contado')
   const [paymentMethod, setPaymentMethod] = useState('efectivo')
@@ -101,6 +102,7 @@ export default function SalesPage() {
 
   const reset = () => {
     setCart([])
+    setDate(today())
     setDiscount('')
     setPaymentType('contado')
     setPaymentMethod('efectivo')
@@ -118,7 +120,7 @@ export default function SalesPage() {
     const payload: SalePayload = {
       p_business_id: bizId,
       p_customer_id: paymentType === 'credito' ? customerId : null,
-      p_date: today(),
+      p_date: date,
       p_payment_type: paymentType,
       p_payment_method: paymentMethod,
       p_amount_paid: paymentType === 'credito' ? Number(amountPaid) || 0 : null,
@@ -221,7 +223,16 @@ export default function SalesPage() {
               <span>Total</span><span>{fmtMoney(total)}</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-2">
+              <Field label="Fecha">
+                <TextInput
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  disabled={role !== 'admin'}
+                  className={role !== 'admin' ? 'bg-page text-label' : ''}
+                />
+              </Field>
               <Field label="Cobro">
                 <select className="w-full rounded-lg border border-input-line px-2 py-2 text-sm" value={paymentType} onChange={(e) => setPaymentType(e.target.value as 'contado' | 'credito')}>
                   <option value="contado">Contado</option>
